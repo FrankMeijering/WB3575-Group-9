@@ -24,6 +24,8 @@ p2 = p_atm*p_ratio_comp*np.ones(len(eta_comp_lst))
 T2 = T_atm*(1+(1/eta_comp_lst)*(p_ratio_comp**((kappa_air-1)/kappa_air)-1))
 W_sp_comp = cp_air*(T2-T_atm*np.ones(len(T2)))
 
+
+# ------------------------------ PLOTTING -------------------------------------
 fig = plt.figure()
 ax1 = fig.add_subplot(1, 3, 1)
 ax2 = fig.add_subplot(1, 3, 2)
