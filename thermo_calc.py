@@ -31,7 +31,7 @@ ax1 = fig.add_subplot(1, 3, 1)
 ax2 = fig.add_subplot(1, 3, 2)
 ax3 = fig.add_subplot(1, 3, 3)
 
-ax1.plot(eta_comp_lst*100, T2, label=r'$T_2$')
+ax1.plot(eta_comp_lst*100, T2-273.15, label=r'$T_2$')
 ax1.set_xlabel(r'$\eta_{is, comp}$ [%]')
 ax1.set_ylabel(r'$T_2$ [K]')
 ax1.legend()
