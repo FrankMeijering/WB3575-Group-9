@@ -11,7 +11,7 @@ cp_air = R_air/(1-1/kappa_air)   # Specific heat at constant pressure of air in 
 
 # Variables
 T_atm = 288.15      # Temperature in Kelvin
-p2_int = 3e5        # Integer value of pressure after compressor (regulated with valve)
+p2_int = 2.5e5        # Integer value of pressure after compressor (regulated with valve)
 
 # ----------------------------- CALCULATIONS ----------------------------------
 # State 'atm' is before the compressor
