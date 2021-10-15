@@ -4,10 +4,13 @@ import matplotlib.pyplot as plt
 from tools import get_folder_file, eta_comp_func
 
 # ----------------------------- DATA PROCESSING -------------------------------
-directory = get_folder_file('data', '21 10 12 12 06 36opladen_rt_15.xls')
+directory = get_folder_file('data', '21 10 12 11 56 13leeglopen_rt_15.xls')
 total_data = pd.read_csv(directory, sep='\t')
 headers = list(total_data.columns.values)
 t = np.array(total_data[headers[0]])
+
+# Determine heat transfer coeff. from delta T from body & atm
+# Expander: perslucht
 
 interval1 = np.logical_and(t > 170, t < 175)  # Use this to select intervals in any array
 interval2 = np.logical_and(t > 10, t < 150)
@@ -28,7 +31,7 @@ R_air = 287.06      # Specific gas constant in J/kg.K
 cp_air = R_air/(1-1/kappa_air)   # Specific heat at constant pressure of air in J/kg.K
 
 # ----------------------------- CALCULATIONS ----------------------------------
-rho_air = p2 / (R_air * T2)     # from ideal gas law [kg/m^3]
+rho_air = p1 / (R_air * T2)     # from ideal gas law [kg/m^3]
 m_dot_max = V_dot_max*rho_air/3600    # [kg/s]
 m_dot_analog = 19   # [%]
 m_dot = m_dot_max*m_dot_analog/100   # [kg/s]
