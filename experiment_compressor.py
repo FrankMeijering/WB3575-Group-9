@@ -79,26 +79,11 @@ if continue_ == 'y':
     velocity = m_dot*R_air*T2/(p2*A)  # [m/s] Flow velocity after compressor
     Q_dot = W_dot - m_dot*(cp_air*(T2-T1) - (velocity**2)/2)  # [W] Heat loss
     efficiency = (1 - Q_dot/W_dot)*100  # [%] Compressor efficiency
-    print('Efficiency: ' + str(efficiency)+' %')
 
-
-'''plt.plot(t, np.array(total_data['temp1']))
-plt.title('Flow Temperature During Compression')
-plt.xlabel('Time [s]')
-plt.ylabel(r'Temperature [$\degree$C]')
-plt.show()
-
-plt.plot(t, np.array(total_data['rpm']))
-plt.title('Rotational Frequency During Compression')
-plt.xlabel('Time [s]')
-plt.ylabel('RPM')
-plt.show()
-
-plt.plot(t, np.array(total_data['torqnm']))
-plt.title('Applied Torque During Compression')
-plt.xlabel('Time [s]')
-plt.ylabel('Torque [Nm]')
-plt.show()'''
+    print('\n-------------- RESULTS --------------')
+    print(f'Power input: {W_dot:.1f} [W]')
+    print(f'Heat loss: {Q_dot:.1f} [W]')
+    print(f'Efficiency: {efficiency:.3f} [%]')
 
 
 # ------------------------------ PLOTTING -------------------------------------
