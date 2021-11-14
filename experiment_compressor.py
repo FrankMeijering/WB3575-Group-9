@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from tools import get_folder_file, eta_comp_func
+from tools import get_folder_file, eta_comp_func, kappa_calc
 
 
 # ------------------------- VALUES TO ADD MANUALLY ----------------------------
@@ -12,7 +12,7 @@ starttime = 70  # in [s]
 endtime = 90   # in [s]
 
 # Enter the mass flow percentage read from the meter.
-m_dot_percent = 18   # in [%]
+m_dot_percent = 20   # in [%]
 
 # Enter the final pressure achieved (absolute pressure, not pressure difference).
 p2 = 2.5  # [bar]
@@ -63,27 +63,34 @@ if continue_ == 'y':
     rpm = np.mean(np.array(total_data["rpm"])[interval])   # [rpm] Revolutions per minute
 
     # Other values
-    kappa_air = 1.4     # Ratio of specific heats
     R_air = 287.06      # [J/kg.K] Specific gas constant
-    cp_air = R_air/(1-1/kappa_air)   # [J/kg.K] Specific heat at constant pressure of air
+    cp_air = 1007.9  # [J/kg.K]
+    kappa_air = 1.3982
+
     V_dot_max = 15.8*1.7    # [m^3/hr] Max measurable volume flow (from datasheet; 1.7 converts from scfm to m3/h).
+    # TODO: Verify max volume flow
     p1 = 101325    # [Pa] Before compressor (assumed to be 1 atm)
     p2 *= 10**5    # [Pa] After compressor
-    A = np.pi*(0.005**2)   # [m^2] Cross-sectional area of the tube after the compressor
+    A = np.pi*(0.004**2)   # [m^2] Cross-sectional area of the tube after the compressor
 
     # Calculations
     rho_air = p1 / (R_air * T2)     # [kg/m^3] Ideal gas law
     m_dot_max = V_dot_max*rho_air/3600    # [kg/s] Maximum measurable mass flow
     m_dot = m_dot_max*m_dot_percent/100   # [kg/s] Actual mass flow
-    W_dot = torque*rpm*2*np.pi/60  # [W] Power input by drill
+    W_dot = -torque*rpm*2*np.pi/60  # [W] Power input by drill (negative)
     velocity = m_dot*R_air*T2/(p2*A)  # [m/s] Flow velocity after compressor
-    Q_dot = W_dot - m_dot*(cp_air*(T2-T1) - (velocity**2)/2)  # [W] Heat loss
-    efficiency = (1 - Q_dot/W_dot)*100  # [%] Compressor efficiency
+    Q_dot = W_dot-m_dot*(cp_air*(T1-T2)-(velocity**2)/2)  # [W] Heat loss.
+    efficiency = (1 - Q_dot/W_dot)*100  # [%] Compressor efficiency? Don't think so... # TODO: Remove
+    efficiency_is = eta_comp_func(T1, T2, p1, p2, kappa_air)*100  # [%] Isentropic efficiency (only valid for Q_dot=0)
 
     print('\n-------------- RESULTS --------------')
-    print(f'Power input: {W_dot:.1f} [W]')
-    print(f'Heat loss: {Q_dot:.1f} [W]')
-    print(f'Efficiency: {efficiency:.3f} [%]')
+    print(f'Power: {W_dot:.1f} [W]')
+    print(f'Heat: {Q_dot:.1f} [W]')
+    print(f'Enthalpy change: {m_dot*cp_air*(T2-T1):.2f} [W]')
+    print(f'Kinetic energy change: {m_dot*(velocity**2)/2:.2f} [W]')
+    print(f'Volume flow: {V_dot_max*m_dot_percent/360:.2f} [L/s]')
+    #print(f'Efficiency: {efficiency:.3f} [%]')
+    print(f'Isentropic efficiency: {efficiency_is:.3f} [%]')
 
 
 # ------------------------------ PLOTTING -------------------------------------
