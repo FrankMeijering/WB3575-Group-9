@@ -8,11 +8,11 @@ from tools import get_folder_file, eta_comp_func, kappa_calc
 # Enter a time interval over which the mean values should be calculated.
 # It is recommended to select a steady-state interval.
 # The program will ask you to perform calculations. If the interval is unknown, these should be skipped.
-starttime = 70  # in [s]
-endtime = 90   # in [s]
+starttime = 950  # in [s]
+endtime = 1000   # in [s]
 
 # Enter the mass flow percentage read from the meter.
-m_dot_percent = 20   # in [%]
+m_dot_percent = 18   # in [%]
 
 # Enter the final pressure achieved (absolute pressure, not pressure difference).
 p2 = 2.5  # [bar]
@@ -30,7 +30,7 @@ p2 = 2.5  # [bar]
 
 # ----------------------------- DATA PROCESSING -------------------------------
 # Import raw data from Excel file
-directory = get_folder_file('data', '21 10 20 11 12 07comp_1.5_28.xls')
+directory = get_folder_file('data', '21 11 15 11 03 52halfhourwarmup_cmp_1.5bar.xls')
 total_data = pd.read_csv(directory, sep='\t')   # Pandas dataframe with all Excel data
 total_data = total_data.drop(columns=['torqv', 'rpmv', 'volt', 'curr', 'flow', 'pressure', 'runtime'])
 headers = list(total_data.columns.values)   # Contains the column titles such as 'time', 'temp1', etc.
@@ -57,7 +57,7 @@ if continue_ == 'y':
     interval = np.logical_and(t > starttime, t < endtime)   # Use to compute mean values
 
     # Values extracted from the data
-    T1 = np.mean(np.array(total_data["temp3"])[interval])+273.15   # [K] Before compressor (atmospheric)
+    T1 = np.mean(np.array(total_data["temp4"])[interval])+273.15   # [K] Before compressor (atmospheric)
     T2 = np.mean(np.array(total_data["temp1"])[interval])+273.15   # [K] After compressor (in the flow)
     torque = np.mean(np.array(total_data["torqnm"])[interval])   # [Nm]
     rpm = np.mean(np.array(total_data["rpm"])[interval])   # [rpm] Revolutions per minute
@@ -67,7 +67,7 @@ if continue_ == 'y':
     cp_air = 1007.9  # [J/kg.K]
     kappa_air = 1.3982
 
-    V_dot_max = 15.8*1.7    # [m^3/hr] Max measurable volume flow (from datasheet; 1.7 converts from scfm to m3/h).
+    V_dot_max = 4.5/1000   # [m^3/s]  Determined with calibration
     # TODO: Verify max volume flow
     p1 = 101325    # [Pa] Before compressor (assumed to be 1 atm)
     p2 *= 10**5    # [Pa] After compressor
@@ -75,12 +75,11 @@ if continue_ == 'y':
 
     # Calculations
     rho_air = p1 / (R_air * T2)     # [kg/m^3] Ideal gas law
-    m_dot_max = V_dot_max*rho_air/3600    # [kg/s] Maximum measurable mass flow
+    m_dot_max = V_dot_max*rho_air    # [kg/s] Maximum measurable mass flow
     m_dot = m_dot_max*m_dot_percent/100   # [kg/s] Actual mass flow
     W_dot = -torque*rpm*2*np.pi/60  # [W] Power input by drill (negative)
     velocity = m_dot*R_air*T2/(p2*A)  # [m/s] Flow velocity after compressor
     Q_dot = W_dot-m_dot*(cp_air*(T1-T2)-(velocity**2)/2)  # [W] Heat loss.
-    efficiency = (1 - Q_dot/W_dot)*100  # [%] Compressor efficiency? Don't think so... # TODO: Remove
     efficiency_is = eta_comp_func(T1, T2, p1, p2, kappa_air)*100  # [%] Isentropic efficiency (only valid for Q_dot=0)
 
     print('\n-------------- RESULTS --------------')
@@ -88,10 +87,8 @@ if continue_ == 'y':
     print(f'Heat: {Q_dot:.1f} [W]')
     print(f'Enthalpy change: {m_dot*cp_air*(T2-T1):.2f} [W]')
     print(f'Kinetic energy change: {m_dot*(velocity**2)/2:.2f} [W]')
-    print(f'Volume flow: {V_dot_max*m_dot_percent/360:.2f} [L/s]')
-    #print(f'Efficiency: {efficiency:.3f} [%]')
+    print(f'Volume flow: {V_dot_max*m_dot_percent*10:.2f} [L/s]')
     print(f'Isentropic efficiency: {efficiency_is:.3f} [%]')
-
 
 # ------------------------------ PLOTTING -------------------------------------
 fig = plt.figure()
