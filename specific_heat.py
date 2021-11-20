@@ -1,14 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from tools import cp_lemmon, kappa_calc
-
+from tools import cp_lemmon, kappa_calc, R_air
 
 # ---------------------- SET UP FUNCTIONS --------------------------
-R = 287.06
 dT = 0.1
 T = np.arange(293.15, 393.15+dT, dT)   # Range which we measure
-cp_lemmon = cp_lemmon(T, R)
-kappa_lemmon = kappa_calc(cp_lemmon, R)
+cp_lemmon = cp_lemmon(T, R_air)
+kappa_lemmon = kappa_calc(cp_lemmon, R_air)
 
 # ------------------------ CALCULATIONS ----------------------------
 # Calculate the averages
@@ -30,6 +28,7 @@ print(f'RMSE cp: {rmse_cp:.3f} [J/kgK]')
 print(f'RMSPE cp: {rmspe_cp:.3f} [%]')
 print(f'RMSE kappa: {rmse_kappa:.5f} [-]')
 print(f'RMSPE kappa: {rmspe_kappa:.4f} [%]')
+print('-------------------------------------')
 
 # ------------------------- PLOTTING -------------------------------
 # Plot for cp
