@@ -3,6 +3,8 @@
 This repository is dedicated to a thermodynamic calculator for an A-CAES (Adiabatic Compressed Air Energy Storage) system. This project is part of the ELECS (Engineering for Large-Scale Energy Conversion and Storage) minor programme at TU Delft.
 
 ## Scripts and Files
+The data files are collected in the 'data' folder.
+
 There are three scripts, structured as follows:
 * "theory_calc.py" is a theoretical model of the compressor, plotting the temperature after the compressor as a function of efficiency
 * "experiment_compressor.py" contains experimental values from the compressor test, plotting the raw data and calculating the efficiency and power
