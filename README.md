@@ -11,3 +11,7 @@ There are five scripts, structured as follows:
 * "theory_calc.py" is a theoretical model of the compressor, plotting the temperature after the compressor as a function of efficiency
 * "experiment_compressor.py" contains experimental values from the compressor test, plotting the raw data and calculating the efficiency and power
 * "experiment_turbine.py" contains experimental values from the turbine test, plotting the raw data and calculating the efficiency and power
+
+## Use
+The main importance is the layout of the '.xls' files. Firstly, the decimal point should be used, not the decimal comma. Secondly, a header row should be present, where the following names are separated by tabs, in this exact order:
+"time	torqv	rpmv	temp1	temp2	temp3	temp4	volt	curr	flow	torqnm	rpm	pressure	runtime"
