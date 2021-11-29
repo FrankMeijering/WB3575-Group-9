@@ -1,10 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from tools import eta_comp_func, import_file, ask_question, multiple_plots, \
     R_air, cp_air, kappa_air, p_atm, V_dot_max, A
 
 # ------------------------- VALUES TO ADD MANUALLY ----------------------------
-# Enter the filename
+# Enter the name of the file within the 'data' folder
 filename = '21 11 15 11 03 52halfhourwarmup_cmp_1.5bar.xls'
 
 # Enter a time interval over which the mean values should be calculated.

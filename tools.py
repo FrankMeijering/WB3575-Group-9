@@ -43,7 +43,7 @@ def import_file(filename):
     headers = list(total_data.columns.values)  # Contains the column titles such as 'time', 'temp1', etc.
     t = np.array(total_data[headers[0]])  # Define a dedicated time array for easier plotting
     ylabels = [r'Flow Temperature [$\degree$C]', r'Body Temperature [$\degree$C]',
-               r'End Temperature in Compressor [$\degree$C]', r'Atmospheric Temperature [$\degree$C]',
+               r'Unused Temperature [$\degree$C]', r'Atmospheric Temperature [$\degree$C]',
                r'Torque [$Nm$]', r'Rotational Frequency [$rpm$]']  # Define y-axes for plotting
     return total_data, headers, t, ylabels
 

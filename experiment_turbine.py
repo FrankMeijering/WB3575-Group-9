@@ -1,10 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from tools import eta_tur_func, import_file, ask_question, multiple_plots,\
     R_air, cp_air, kappa_air, p_atm, V_dot_max, A
 
 # ------------------------- VALUES TO ADD MANUALLY ----------------------------
-# Enter the filename
+# Enter the name of the file within the 'data' folder
 # Drill as generator, 1.5 bar:  21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls
 # Free rotation:                21 11 18 12 09 36tur_free_rotation.xls
 # Fixed end, no rotation:       21 11 18 12 12 53tur_zero_rpm.xls
