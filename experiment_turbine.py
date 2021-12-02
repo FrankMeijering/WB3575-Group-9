@@ -1,39 +1,11 @@
 import numpy as np
-from tools import eta_tur_func, import_file, ask_question, multiple_plots,\
+from tools import eta_tur_func, import_file, ask_question, multiple_plots, extra_file_info, \
     R_air, cp_air, kappa_air, p_atm, V_dot_max, A
 
-# ------------------------- VALUES TO ADD MANUALLY ----------------------------
+# # ----------------------------- IMPORT DATA ----------------------------------
 # Enter the name of the file within the 'data' folder
-# Drill as generator, 1.5 bar:  21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls
-# Free rotation:                21 11 18 12 09 36tur_free_rotation.xls
-# Fixed end, no rotation:       21 11 18 12 12 53tur_zero_rpm.xls
 filename = '21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls'
 
-# Enter a time interval over which the mean values should be calculated.
-# It is recommended to select a steady-state interval.
-# The program will ask you to perform calculations. If the interval is unknown, these should be skipped.
-
-starttime = 120  # in [s]
-endtime = 125   # in [s]
-
-# Enter the mass flow percentage read from the meter.
-m_dot_percent = 18   # in [%]
-
-# Enter the incoming pressure (compressed air)
-p1 = 2.5  # [bar]
-
-# ----------------------------- DATA DESCRIPTION ------------------------------
-# 'time' is the time the test has run in [s]
-# 'temp1' is the temperature of the flow, before the turbine
-# 'temp2' is unused
-# 'temp3' is the temperature of the flow, after the turbine
-# 'temp4' is the atmospheric temperature
-# 'torqnm' is the torque input to the compressor in [Nm]
-# 'rpm' is the rotational frequency in [revolutions per minute]
-# The remaining values are not used here
-
-
-# ----------------------------- DATA PROCESSING -------------------------------
 # Import raw data from Excel file
 total_data, headers, t, ylabels = import_file(filename)
 
@@ -43,19 +15,21 @@ continue_ = ask_question()
 
 # Perform calculation if requested
 if continue_ == 'y':
-    interval = np.logical_and(t > starttime, t < endtime)   # Use to compute mean values
+    extra_info = extra_file_info(filename)
+    interval = np.logical_and(t > extra_info[0], t < extra_info[1])   # Use to compute mean values
 
     # Calibrate torque meter
     if filename == '21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls':
         total_data["torqnm"] -= 0.5
 
     # Values extracted from data
-    T1 = np.mean(np.array(total_data["temp1"])[interval])+273.15   # [K] Before compressor (atmospheric)
-    T2 = np.mean(np.array(total_data["temp3"])[interval])+273.15   # [K] After compressor (in the flow)
+    T1 = np.mean(np.array(total_data[extra_info[4]])[interval])+273.15   # [K] Before compressor (atmospheric)
+    T2 = np.mean(np.array(total_data[extra_info[5]])[interval])+273.15   # [K] After compressor (in the flow)
     torque = np.mean(np.array(total_data["torqnm"])[interval])   # [Nm]
     rpm = np.mean(np.array(total_data["rpm"])[interval])   # [rpm] Revolutions per minute
-    p1 *= 10**5    # [Pa] Before compressor (assumed to be 1 atm)
+    p1 = 1e5*extra_info[3]    # [Pa] Before compressor (assumed to be 1 atm)
     p2 = p_atm    # [Pa] After compressor
+    m_dot_percent = extra_info[2]
 
     # Calculations
     rho_air_1 = p1 / (R_air * T1)     # [kg/m^3] Ideal gas law for station 1, to calculate velocity1 and the mass flow

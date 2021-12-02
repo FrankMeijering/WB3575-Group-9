@@ -79,6 +79,16 @@ def multiple_plots(filename, headers, total_data, ylabels, t):
     plt.show()
 
 
+def extra_file_info(filename):
+    # If 'n.a.' is given, it means this value is irrelevant.
+    directory = get_folder_file('data', 'extra_file_info.xls')
+    total_file = pd.read_csv(directory, sep='\t')  # Pandas dataframe with all Excel data
+    row = np.array(total_file.loc[total_file['filename'] == filename])[0][1:]  # Remove first column
+    # Values in row are: [starttime, endtime, mflow_percent, pressure_abs,
+    # temp_before, temp_after, temp_body, temp_atm, temp_water, temp_unused]
+    return row
+
+
 # --------------------------- CONSTANTS ---------------------------
 R_air = 287.06      # [J/kg.K] Specific gas constant
 cp_air = 1007.9  # [J/kg.K] Found with specific_heat.py
@@ -86,3 +96,4 @@ kappa_air = 1.3982  # Found with specific_heat.py
 p_atm = 101325  # [Pa] Before compressor (assumed to be 1 atm)
 V_dot_max = 0.0045  # [m^3/s]  Determined with calibration
 A = np.pi * (0.004 ** 2)  # [m^2] Cross-sectional area of the compressor/turbine inlet and outlet
+T1w = 15 + 273.15  # [K] Temperature of the tap water

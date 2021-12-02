@@ -1,52 +1,34 @@
 import numpy as np
-from tools import eta_comp_func, import_file, ask_question, multiple_plots, \
-    R_air, cp_air, kappa_air, p_atm, V_dot_max, A
+from tools import eta_comp_func, import_file, ask_question, multiple_plots, extra_file_info, \
+    R_air, cp_air, kappa_air, p_atm, V_dot_max, A, T1w
 
-# ------------------------- VALUES TO ADD MANUALLY ----------------------------
+# # ----------------------------- IMPORT DATA ----------------------------------
 # Enter the name of the file within the 'data' folder
-filename = '21 11 15 11 03 52halfhourwarmup_cmp_1.5bar.xls'
+filename = '21 11 29 15 07 47comp_1.5bar_cooling_high_mflow.xls'
 
-# Enter a time interval over which the mean values should be calculated.
-# It is recommended to select a steady-state interval.
-# The program will ask you to perform calculations. If the interval is unknown, these should be skipped.
-starttime = 950  # in [s]
-endtime = 1000   # in [s]
-
-# Enter the mass flow percentage read from the meter.
-m_dot_percent = 18   # in [%]
-
-# Enter the final pressure achieved (absolute pressure, not pressure difference).
-p2 = 2.5  # [bar]
-
-# ----------------------------- DATA DESCRIPTION ------------------------------
-# 'time' is the time the test has run in [s]
-# 'temp1' is the temperature of the flow, after the compressor
-# 'temp2' is the temperature of the outside surface of the compressor
-# 'temp3' is the temperature inside the compressor immediately after the test is stopped
-# 'temp4' is the atmospheric temperature
-# 'torqnm' is the torque input to the compressor in [Nm]
-# 'rpm' is the rotational frequency in [revolutions per minute]
-# The remaining values are not used here
-
-# ----------------------------- DATA PROCESSING -------------------------------
 # Import raw data from Excel file
 total_data, headers, t, ylabels = import_file(filename)
 
 # ------------------------------- CALCULATIONS --------------------------------
-# Ask if the calculations should be done
+# Ask if the calculations should be done (useful if a new file is to be processed)
 continue_ = ask_question()
 
 # Perform calculation if requested
 if continue_ == 'y':
-    interval = np.logical_and(t > starttime, t < endtime)   # Use to compute mean values
+    extra_info = extra_file_info(filename)
+    interval = np.logical_and(t > extra_info[0], t < extra_info[1])   # Use to compute mean values
+    cooling = False
+    if extra_info[8] != 'n.a.':
+        cooling = True
 
     # Values extracted from data
-    T1 = np.mean(np.array(total_data["temp4"])[interval])+273.15   # [K] Before compressor (atmospheric)
-    T2 = np.mean(np.array(total_data["temp1"])[interval])+273.15   # [K] After compressor (in the flow)
+    T1 = np.mean(np.array(total_data[extra_info[4]])[interval])+273.15   # [K] Before compressor
+    T2 = np.mean(np.array(total_data[extra_info[5]])[interval])+273.15   # [K] After compressor
     torque = np.mean(np.array(total_data["torqnm"])[interval])   # [Nm]
     rpm = np.mean(np.array(total_data["rpm"])[interval])   # [rpm] Revolutions per minute
     p1 = p_atm    # [Pa] Before compressor (assumed to be 1 atm)
-    p2 *= 10**5    # [Pa] After compressor
+    p2 = 1e5*extra_info[3]    # [Pa] After compressor
+    m_dot_percent = extra_info[2]
 
     # Calculations
     rho_air_1 = p1 / (R_air * T1)   # [kg/m^3] Ideal gas law for station 1, to calculate the mass flow and velocity1
@@ -59,6 +41,9 @@ if continue_ == 'y':
     Q_dot = W_dot-m_dot*(cp_air*(T1-T2)+(velocity1**2)/2-(velocity2**2)/2)  # [W] Heat input (negative)
     efficiency_comp_is = eta_comp_func(T1, T2, p1, p2, kappa_air)*100  # [%] Isentropic efficiency (valid if Q_dot=0)
 
+    if cooling:   # i.e. if there is a water temperature measured
+        T2w = np.mean(np.array(total_data[extra_info[8]])[interval]) + 273.15  # [K] Before compressor
+
     print('\n-------------- RESULTS --------------')
     print(f'Power: {W_dot:.1f} [W]')
     print(f'Heat: {Q_dot:.1f} [W]')
@@ -68,7 +53,11 @@ if continue_ == 'y':
     print(f'Volume flow: {V_dot_max*m_dot_percent*10:.2f} [L/s]')
     print(f'Mass flow: {m_dot:.5f} [kg/s]')
     print(f'Isentropic compressor efficiency: {efficiency_comp_is:.3f} [%]')
+    if cooling:
+        print(f'Water temperature change: {T2w-T1w:.2f} deg Celsius')
     print('-------------------------------------')
 
 # ------------------------------ PLOTTING -------------------------------------
 multiple_plots(filename, headers, total_data, ylabels, t)
+
+# TODO: make sure the ylabels update according to the extra data Excel file.

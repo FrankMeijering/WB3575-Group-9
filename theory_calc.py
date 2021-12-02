@@ -22,6 +22,7 @@ W_sp_tur = cp_air*(T_atm*np.ones(len(T2_tur))-T2_tur)   # [J/kg] Work done *BY* 
 
 # ------------------------------ PLOTTING -------------------------------------
 fig = plt.figure()
+fig.suptitle('Isentropic Efficiencies')
 
 ax1 = fig.add_subplot(2, 2, 1)
 ax1.plot(eta_comp_lst*100, T2_comp-273.15, label=r'$T_2$')
