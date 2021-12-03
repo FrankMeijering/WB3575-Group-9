@@ -42,9 +42,9 @@ def import_file(filename):
     total_data = total_data.drop(columns=['torqv', 'rpmv', 'volt', 'curr', 'flow', 'pressure', 'runtime'])
     headers = list(total_data.columns.values)  # Contains the column titles such as 'time', 'temp1', etc.
     t = np.array(total_data[headers[0]])  # Define a dedicated time array for easier plotting
-    ylabels = [r'Flow Temperature [$\degree$C]', r'Body Temperature [$\degree$C]',
-               r'Unused Temperature [$\degree$C]', r'Atmospheric Temperature [$\degree$C]',
-               r'Torque [$Nm$]', r'Rotational Frequency [$rpm$]']  # Define y-axes for plotting
+    ylabels = [r'Temperature 1 [$\degree$C]', r'Temperature 2 [$\degree$C]',
+               r'Temperature 3 [$\degree$C]', r'Temperature 3 [$\degree$C]',
+               r'Torque [$Nm$]', r'Rotational Frequency [$rpm$]']  # y-axes in case the extra info is unavailable.
     return total_data, headers, t, ylabels
 
 
@@ -79,14 +79,36 @@ def multiple_plots(filename, headers, total_data, ylabels, t):
     plt.show()
 
 
-def extra_file_info(filename):
+def extra_file_info(filename, comptrue):
+    # comptrue is True if it is the compressor test, and False if it the turbine test.
     # If 'n.a.' is given, it means this value is irrelevant.
     directory = get_folder_file('data', 'extra_file_info.xls')
     total_file = pd.read_csv(directory, sep='\t')  # Pandas dataframe with all Excel data
     row = np.array(total_file.loc[total_file['filename'] == filename])[0][1:]  # Remove first column
     # Values in row are: [starttime, endtime, mflow_percent, pressure_abs,
     # temp_before, temp_after, temp_body, temp_atm, temp_water, temp_unused]
-    return row
+
+    # Update ylabels from import_file from the extra information
+    ylabels = ['temp1', 'temp2', 'temp3', 'temp4', r'Torque [$Nm$]', r'Rotational Frequency [$rpm$]']
+
+    word = 'Turbine'
+    if comptrue:
+        word = 'Compressor'
+
+    temps = ['Temperature Before ' + word + r' [$\degree$C]',
+             'Temperature After ' + word + r' [$\degree$C]',
+             r'Body Temperature [$\degree$C]',
+             r'Atmospheric Temperature [$\degree$C]',
+             'Water Temperature After ' + word + r' [$\degree$C]',
+             r'Unused Temperature [$\degree$C]']
+
+    row_temps = row[4:]  # Extract the temperature data
+    for j in range(4):  # 4 temperature locations in ylabels
+        for i in range(len(row_temps)):  # quantities from the extra data file
+            if row_temps[i] == ylabels[j]:
+                ylabels[j] = temps[i]
+
+    return row, ylabels
 
 
 # --------------------------- CONSTANTS ---------------------------

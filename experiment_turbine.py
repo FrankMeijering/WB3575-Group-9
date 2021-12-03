@@ -15,7 +15,7 @@ continue_ = ask_question()
 
 # Perform calculation if requested
 if continue_ == 'y':
-    extra_info = extra_file_info(filename)
+    extra_info, ylabels = extra_file_info(filename, False)
     interval = np.logical_and(t > extra_info[0], t < extra_info[1])   # Use to compute mean values
 
     # Calibrate torque meter
