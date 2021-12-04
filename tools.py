@@ -68,13 +68,56 @@ def multiple_plots(filename, headers, total_data, ylabels, t):
     fig.suptitle('File:   ' + filename)
     axes = []
     i = 0
-    for header in headers[1:]:
+    for header in headers[1:]:   # One header corresponds to one axis system
         axes.append(fig.add_subplot(2, 3, i + 1))
         axes[-1].plot(t, np.array(total_data[header]))
         axes[-1].set_title(header)
         axes[-1].set_xlabel('Time [s]')
         axes[-1].set_ylabel(ylabels[i])
         i += 1
+    fig.tight_layout()
+    plt.show()
+
+
+def combined_plots(filenames, headers, total_data_lst, ylabels_lst, t):
+    # Plots of multiple tests in one figure
+
+    # First make sure the plots in one figure represent the same quantities.
+    # Take the first test as reference.
+    i = 1  # start at the second test
+    for ylabels in ylabels_lst[1:]:  # Look at all tests except the first one
+        for k in range(len(ylabels_lst[0])):  # Look through the labels of the first test
+            if ylabels_lst[0][k] != ylabels[k]:  # If the labels do not match
+                for n in range(len(ylabels)):  # Look through the labels of the current test
+                    if ylabels_lst[0][k] == ylabels[n]:  # Look for which they do match, swap the current test values
+                        ylabels[k], ylabels[n] = ylabels[n], ylabels[k]
+
+                        # index +1 since the 'time' column is not used
+                        headers_temporary = list(headers)  # Use 'list' to make the headers immutable
+                        headers_temporary[k+1], headers_temporary[n+1] = headers_temporary[n+1], headers_temporary[k+1]
+                        total_data_lst[i] = total_data_lst[i].reindex(columns=headers_temporary)
+                        total_data_lst[i].columns = headers
+        i += 1
+
+    fig = plt.figure()
+    fig.suptitle('Results of Multiple Tests')
+    axes = []
+    i = 0
+    for header in headers[1:]:  # One header corresponds to one axis system
+        axes.append(fig.add_subplot(2, 3, i + 1))
+        x = 0
+        for data in total_data_lst:  # Plot the info from the multiple tests, all in the same axis system
+            if i == 0:  # colours remain the same, so only need one legend
+                axes[-1].plot(t, np.array(data[header]),
+                              label=filenames[x][17:])  # cut part of the filename out
+            else:
+                axes[-1].plot(t, np.array(data[header]))
+            x += 1
+        axes[-1].set_title(header)
+        axes[-1].set_xlabel('Time [s]')
+        axes[-1].set_ylabel(ylabels_lst[0][i])
+        i += 1
+    fig.legend(bbox_to_anchor=(1, 1))
     fig.tight_layout()
     plt.show()
 
