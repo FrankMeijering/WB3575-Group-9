@@ -16,7 +16,7 @@ ylabels_lst = []
 for file in filenames:
     # Import raw data from Excel file
     total_data, headers, t, _ = import_file(file)
-    extra_info, ylabels = extra_file_info(file, False)
+    extra_info, ylabels = extra_file_info(file)
     total_data_lst.append(total_data)
     t_lst.append(t)
     extra_info_lst.append(extra_info)
@@ -39,3 +39,5 @@ for i in range(len(filenames)):   # Add zeroes
 
 # ------------------------------ PLOTTING -------------------------------------
 combined_plots(filenames, headers, total_data_lst, ylabels_lst, longest_t)
+
+# TODO: FIX LABEL TURBINE/COMPRESSOR

@@ -4,18 +4,24 @@ from tools import eta_comp_func, import_file, ask_question, multiple_plots, extr
 
 # # ----------------------------- IMPORT DATA ----------------------------------
 # Enter the name of the file within the 'data' folder
-filename = '21 11 29 15 07 47comp_1.5bar_cooling_high_mflow.xls'
+filename = '21 12 06 11 29 43comp_versnelling1_drukverschil.xls'
 
 # Import raw data from Excel file
 total_data, headers, t, ylabels = import_file(filename)
 
 # ------------------------------- CALCULATIONS --------------------------------
 # Ask if the calculations should be done (useful if a new file is to be processed)
-continue_ = ask_question()
+continue_ = ask_question('Data available in \'extra_file_info.xls\'? (y/n): ')
 
 # Perform calculation if requested
 if continue_ == 'y':
-    extra_info, ylabels = extra_file_info(filename, True)
+    ans = ask_question('Do you want to plot lines for start- and endtimes? (y/n): ')
+    if ans == 'y':
+        plotlines = True
+    else:
+        plotlines = False
+
+    extra_info, ylabels = extra_file_info(filename)
     interval = np.logical_and(t > extra_info[0], t < extra_info[1])   # Use to compute mean values
     cooling = False
     if extra_info[8] != 'n.a.':
@@ -57,7 +63,10 @@ if continue_ == 'y':
         print(f'Water temperature change: {T2w-T1w:.2f} deg Celsius')
     print('-------------------------------------')
 
-# ------------------------------ PLOTTING -------------------------------------
-multiple_plots(filename, headers, total_data, ylabels, t)
+    # ------------------------------ PLOTTING -------------------------------------
+    multiple_plots(filename, headers, total_data, ylabels, t, extra_info, plotlines)
+else:
+    multiple_plots(filename, headers, total_data, ylabels, t, 0, False)
 
-# TODO: make sure the ylabels update according to the extra data Excel file.
+
+# TODO: indicate timestamps as vertical lines in plot

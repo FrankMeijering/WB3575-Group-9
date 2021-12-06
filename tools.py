@@ -48,12 +48,12 @@ def import_file(filename):
     return total_data, headers, t, ylabels
 
 
-def ask_question():
-    # Ask the user if they want to perform calculations or not.
+def ask_question(ques):
+    # Ask the user a question and answer 'y' or 'n'.
     loop = True
     continue_ = 'n'
     while loop:
-        continue_ = input('Perform calculations? (y/n): ')
+        continue_ = input(ques)
         if continue_ != 'y' and continue_ != 'n':
             loop = True
             print('\nInvalid input. Please enter \'y\' or \'n\'.')
@@ -62,7 +62,7 @@ def ask_question():
     return continue_
 
 
-def multiple_plots(filename, headers, total_data, ylabels, t):
+def multiple_plots(filename, headers, total_data, ylabels, t, extrainfo, plottimes):
     # Plot all relevant data in a single figure.
     fig = plt.figure()
     fig.suptitle('File:   ' + filename)
@@ -71,6 +71,13 @@ def multiple_plots(filename, headers, total_data, ylabels, t):
     for header in headers[1:]:   # One header corresponds to one axis system
         axes.append(fig.add_subplot(2, 3, i + 1))
         axes[-1].plot(t, np.array(total_data[header]))
+        if plottimes:
+            axes[-1].axvline(extrainfo[0], color='red')
+            axes[-1].axvline(extrainfo[1], color='red')
+            if extrainfo[11] != 'n.a.':
+                split_txt = extrainfo[11].split(',')
+                for x in split_txt:
+                    axes[-1].axvline(int(x), color='red')
         axes[-1].set_title(header)
         axes[-1].set_xlabel('Time [s]')
         axes[-1].set_ylabel(ylabels[i])
@@ -122,7 +129,7 @@ def combined_plots(filenames, headers, total_data_lst, ylabels_lst, t):
     plt.show()
 
 
-def extra_file_info(filename, comptrue):
+def extra_file_info(filename):
     # comptrue is True if it is the compressor test, and False if it the turbine test.
     # If 'n.a.' is given, it means this value is irrelevant.
     directory = get_folder_file('data', 'extra_file_info.xls')
@@ -134,6 +141,7 @@ def extra_file_info(filename, comptrue):
     # Update ylabels from import_file from the extra information
     ylabels = ['temp1', 'temp2', 'temp3', 'temp4', r'Torque [$Nm$]', r'Rotational Frequency [$rpm$]']
 
+    comptrue = row[10]   # 0's and 1's in the datasheet are used as Booleans.
     word = 'Turbine'
     if comptrue:
         word = 'Compressor'
@@ -145,7 +153,7 @@ def extra_file_info(filename, comptrue):
              'Water Temperature After ' + word + r' [$\degree$C]',
              r'Unused Temperature [$\degree$C]']
 
-    row_temps = row[4:]  # Extract the temperature data
+    row_temps = row[4:10]  # Extract the temperature data
     for j in range(4):  # 4 temperature locations in ylabels
         for i in range(len(row_temps)):  # quantities from the extra data file
             if row_temps[i] == ylabels[j]:

@@ -5,22 +5,24 @@ from tools import eta_tur_func, import_file, ask_question, multiple_plots, extra
 # # ----------------------------- IMPORT DATA ----------------------------------
 # Enter the name of the file within the 'data' folder
 filename = '21 11 29 11 04 30tur_1.5bar.xls'
-
+filename = '21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls'
 # Import raw data from Excel file
 total_data, headers, t, ylabels = import_file(filename)
 
 # ------------------------------- CALCULATIONS --------------------------------
 # Ask if the calculations should be done
-continue_ = ask_question()
+continue_ = ask_question('Data available in \'extra_file_info.xls\'? (y/n): ')
 
 # Perform calculation if requested
 if continue_ == 'y':
-    extra_info, ylabels = extra_file_info(filename, False)
-    interval = np.logical_and(t > extra_info[0], t < extra_info[1])   # Use to compute mean values
+    ans = ask_question('Do you want to plot lines for start- and endtimes? (y/n): ')
+    if ans == 'y':
+        plotlines = True
+    else:
+        plotlines = False
 
-    # Calibrate torque meter
-    if filename == '21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls':
-        total_data["torqnm"] -= 0.5
+    extra_info, ylabels = extra_file_info(filename)
+    interval = np.logical_and(t > extra_info[0], t < extra_info[1])   # Use to compute mean values
 
     # Values extracted from data
     T1 = np.mean(np.array(total_data[extra_info[4]])[interval])+273.15   # [K] Before compressor (atmospheric)
@@ -53,5 +55,7 @@ if continue_ == 'y':
     print(f'Isentropic turbine efficiency: {efficiency_tur_is:.3f} [%]')
     print('-------------------------------------')
 
-# ------------------------------ PLOTTING -------------------------------------
-multiple_plots(filename, headers, total_data, ylabels, t)
+    # ------------------------------ PLOTTING -------------------------------------
+    multiple_plots(filename, headers, total_data, ylabels, t, extra_info, plotlines)
+else:
+    multiple_plots(filename, headers, total_data, ylabels, t, 0, False)
