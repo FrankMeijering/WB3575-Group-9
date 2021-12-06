@@ -1,0 +1,15 @@
+filename	starttime	endtime	mflow_percent	pressure_abs	temp_before	temp_after	temp_body	temp_atm	temp_water	temp_unused	comptrue	extra_vlines
+21 11 15 11 03 52halfhourwarmup_cmp_1.5bar.xls	950	1000	18	2.5	temp4	temp1	temp2	temp4	n.a.	temp3	1	n.a.
+21 11 18 11 42 18tur_multimeter10ohm1bar.xls	300	320	10	2	temp1	temp3	temp2	temp4	n.a.	n.a.	0	n.a.
+21 11 18 11 52 56tur_multimeter10ohm_1_3_bar.xls	130	140	15	2.3	temp1	temp3	temp2	temp4	n.a.	n.a.	0	n.a.
+21 11 18 11 59 11tur_multimeter10ohm_anderhalf_bar.xls	120	125	20	2.5	temp1	temp3	temp2	temp4	n.a.	n.a.	0	n.a.
+21 11 18 12 09 36tur_free_rotation.xls	100	110	20	2.5	temp1	temp3	temp2	temp4	n.a.	n.a.	0	n.a.
+21 11 18 12 12 53tur_zero_rpm.xls	170	180	10	2.5	temp1	temp3	temp2	temp4	n.a.	n.a.	0	n.a.
+21 11 29 11 04 30tur_1.5bar.xls	580	620	20	2.5	temp1	temp2	temp3	temp4	n.a.	n.a.	0	n.a.
+21 11 29 11 29 07tur_1.25bar_50msec.xls	20	80	15	2.25	temp1	temp2	temp3	temp4	n.a.	n.a.	0	n.a.
+21 11 29 11 31 47tur_1bar_50msec.xls	60	70	10	2	temp1	temp2	temp3	temp4	n.a.	n.a.	0	n.a.
+21 11 29 15 07 47comp_1.5bar_cooling_high_mflow.xls	1200	1250	14	2.5	temp2	temp1	temp3	temp2	temp4	n.a.	1	n.a.
+21 11 29 15 39 41comp_1.5bar_cooling_low_mflow.xls	1100	1150	14	2.5	temp2	temp1	temp3	temp2	temp4	n.a.	1	n.a.
+21 11 29 17 00 18comp_1.5bar_cooling_medium_mflow.xls	1050	1100	14	2.5	temp4	temp1	temp3	temp4	temp2	n.a.	1	n.a.
+21 12 06 11 29 43comp_versnelling1_drukverschil.xls	0	3844	13	3	temp2	temp1	temp3	temp2	n.a.	n.a.	1	600,900,1200,1500,1800,2100,2400,2700,3000,3300
+21 12 06 10 46 44comp_1.5bar_versnelling1_poging2.xls	2350	2450	14	2.5	temp2	temp1	temp3	temp2	n.a.	n.a.	1	n.a.
