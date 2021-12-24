@@ -4,9 +4,11 @@ import pandas as pd
 
 # # ----------------------------- IMPORT DATA ----------------------------------
 # Enter the name of the file within the 'data' folder
-filenames = ['21 11 29 15 07 47comp_1.5bar_cooling_high_mflow.xls',
+filenames = ['21 12 06 10 46 44comp_1.5bar_versnelling1_poging2.xls',
              '21 11 29 15 39 41comp_1.5bar_cooling_low_mflow.xls',
-             '21 11 29 17 00 18comp_1.5bar_cooling_medium_mflow.xls']
+             '21 11 29 15 07 47comp_1.5bar_cooling_high_mflow.xls']
+filenames = ['21 11 15 11 03 52halfhourwarmup_cmp_1.5bar.xls',
+             'Opwarming V2_olie.xls']
 
 total_data_lst = []
 t_lst = []
@@ -18,6 +20,7 @@ for file in filenames:
     total_data, headers, t, _ = import_file(file)
     extra_info, ylabels = extra_file_info(file)
     total_data_lst.append(total_data)
+
     t_lst.append(t)
     extra_info_lst.append(extra_info)
     ylabels_lst.append(ylabels)
@@ -38,6 +41,4 @@ for i in range(len(filenames)):   # Add zeroes
         total_data_lst[i] = total_data_lst[i].append(zero_dataframe)
 
 # ------------------------------ PLOTTING -------------------------------------
-combined_plots(filenames, headers, total_data_lst, ylabels_lst, longest_t)
-
-# TODO: FIX LABEL TURBINE/COMPRESSOR
+combined_plots(filenames, headers, total_data_lst, ylabels_lst, longest_t, extra_info_lst)

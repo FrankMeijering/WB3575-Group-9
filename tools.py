@@ -65,7 +65,10 @@ def ask_question(ques):
 def multiple_plots(filename, headers, total_data, ylabels, t, extrainfo, plottimes):
     # Plot all relevant data in a single figure.
     fig = plt.figure()
-    fig.suptitle('File:   ' + filename)
+    if type(extrainfo) == int:
+        fig.suptitle(filename)
+    else:
+        fig.suptitle(extrainfo[12])
     axes = []
     i = 0
     for header in headers[1:]:   # One header corresponds to one axis system
@@ -77,7 +80,7 @@ def multiple_plots(filename, headers, total_data, ylabels, t, extrainfo, plottim
             if extrainfo[11] != 'n.a.':
                 split_txt = extrainfo[11].split(',')
                 for x in split_txt:
-                    axes[-1].axvline(int(x), color='red')
+                    axes[-1].axvline(int(x), color='red', linestyle='dotted')
         axes[-1].set_title(header)
         axes[-1].set_xlabel('Time [s]')
         axes[-1].set_ylabel(ylabels[i])
@@ -86,7 +89,7 @@ def multiple_plots(filename, headers, total_data, ylabels, t, extrainfo, plottim
     plt.show()
 
 
-def combined_plots(filenames, headers, total_data_lst, ylabels_lst, t):
+def combined_plots(filenames, headers, total_data_lst, ylabels_lst, t, extra_info_lst):
     # Plots of multiple tests in one figure
 
     # First make sure the plots in one figure represent the same quantities.
@@ -112,11 +115,10 @@ def combined_plots(filenames, headers, total_data_lst, ylabels_lst, t):
     i = 0
     for header in headers[1:]:  # One header corresponds to one axis system
         axes.append(fig.add_subplot(2, 3, i + 1))
-        x = 0
+        x = 0  # x indicates which experiment is plotted
         for data in total_data_lst:  # Plot the info from the multiple tests, all in the same axis system
             if i == 0:  # colours remain the same, so only need one legend
-                axes[-1].plot(t, np.array(data[header]),
-                              label=filenames[x][17:])  # cut part of the filename out
+                axes[-1].plot(t, np.array(data[header]), label=extra_info_lst[x][12])  # Understandable label
             else:
                 axes[-1].plot(t, np.array(data[header]))
             x += 1
@@ -146,11 +148,11 @@ def extra_file_info(filename):
     if comptrue:
         word = 'Compressor'
 
-    temps = ['Temperature Before ' + word + r' [$\degree$C]',
-             'Temperature After ' + word + r' [$\degree$C]',
+    temps = ['Temperature Before\n ' + word + r' [$\degree$C]',
+             'Temperature After\n ' + word + r' [$\degree$C]',
              r'Body Temperature [$\degree$C]',
              r'Atmospheric Temperature [$\degree$C]',
-             'Water Temperature After ' + word + r' [$\degree$C]',
+             'Water Temperature After\n ' + word + r' [$\degree$C]',
              r'Unused Temperature [$\degree$C]']
 
     row_temps = row[4:10]  # Extract the temperature data

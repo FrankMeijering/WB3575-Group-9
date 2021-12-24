@@ -28,6 +28,7 @@ if continue_ == 'y':
         cooling = True
 
     # Values extracted from data
+    T_body = np.mean(np.array(total_data[extra_info[6]])[interval])+273.15   # [K] Of compressor body
     T1 = np.mean(np.array(total_data[extra_info[4]])[interval])+273.15   # [K] Before compressor
     T2 = np.mean(np.array(total_data[extra_info[5]])[interval])+273.15   # [K] After compressor
     torque = np.mean(np.array(total_data["torqnm"])[interval])   # [Nm]
@@ -39,7 +40,7 @@ if continue_ == 'y':
     # Calculations
     rho_air_1 = p1 / (R_air * T1)   # [kg/m^3] Ideal gas law for station 1, to calculate the mass flow and velocity1
     rho_air_2 = p2 / (R_air * T2)   # [kg/m^3] Ideal gas law for station 2, to calculate the mass flow and velocity2
-    m_dot_max = V_dot_max*rho_air_2    # [kg/s] Maximum measurable mass flow (uses rho2 since the flowmeter is there)
+    m_dot_max = V_dot_max*rho_air_1    # [kg/s] Maximum measurable mass flow
     m_dot = m_dot_max*m_dot_percent/100   # [kg/s] Actual mass flow
     W_dot = -torque*rpm*2*np.pi/60  # [W] Power input by drill (negative)
     velocity1 = m_dot/(rho_air_1*A)  # [m/s] Flow velocity before compressor
@@ -51,14 +52,23 @@ if continue_ == 'y':
         T2w = np.mean(np.array(total_data[extra_info[8]])[interval]) + 273.15  # [K] Before compressor
 
     print('\n-------------- RESULTS --------------')
+    print(f'Time: {extra_info[0]:.3f} [s]')
+    print(f'Torque: {torque:.3f} [Nm]')
+    print(f'rpm: {rpm:.1f} [rpm]')
     print(f'Power: {W_dot:.1f} [W]')
     print(f'Heat: {Q_dot:.1f} [W]')
+    print(f'Body temperature: {T_body-273.15:.2f} deg Celsius')
+    print(f'Temperature 1: {T1-273.15:.2f} deg Celsius')
+    print(f'Temperature 2: {T2-273.15:.2f} deg Celsius')
     print(f'Temperature change: {T2-T1:.2f} deg Celsius')
+    print(f'Enthalpy 1: {cp_air*T1:.2f} [J/kg]')
+    print(f'Enthalpy 2: {cp_air*T2:.2f} [J/kg]')
     print(f'Enthalpy change: {m_dot*cp_air*(T2-T1):.2f} [W]')
     print(f'Kinetic energy change: {m_dot*((velocity2**2)/2-(velocity1**2)/2):.2f} [W]')
     print(f'Volume flow: {V_dot_max*m_dot_percent*10:.2f} [L/s]')
-    print(f'Mass flow: {m_dot:.5f} [kg/s]')
+    print(f'Mass flow: {m_dot:.6f} [kg/s]')
     print(f'Isentropic compressor efficiency: {efficiency_comp_is:.3f} [%]')
+    print(f'')
     if cooling:
         print(f'Water temperature change: {T2w-T1w:.2f} deg Celsius')
     print('-------------------------------------')
@@ -67,6 +77,3 @@ if continue_ == 'y':
     multiple_plots(filename, headers, total_data, ylabels, t, extra_info, plotlines)
 else:
     multiple_plots(filename, headers, total_data, ylabels, t, 0, False)
-
-
-# TODO: indicate timestamps as vertical lines in plot
