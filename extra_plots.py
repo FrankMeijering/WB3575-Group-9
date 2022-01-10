@@ -50,8 +50,8 @@ ax2.set_ylabel(r'Temperature After Compressor [$\degree$C]')
 
 # ----------------------------- TEMPERATURE VS PRESSURE TURBINE ----------------------------
 # Experimental values
-p = np.array([[1.5, 2.0, 2.25, 2.5, 3.0, 3.5, 4.0]])
-T_turb = np.array([[19.5, 10.2, 6.05, 1.43, np.nan, np.nan, np.nan]])
+p = np.array([[1.5, 2.0, 2.5, 3.0, 3.5, 4.0]])
+T_turb = np.array([[19.5, 10.80, 6.50, 3.10, -1.50, -5.43]])
 
 # Adiabatic values
 T_adiabatic = (19.5+273.15)*(p_atm/(p*1e5))**((kappa_air-1)/kappa_air)-273.15

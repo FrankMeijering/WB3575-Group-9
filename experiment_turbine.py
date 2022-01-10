@@ -4,7 +4,7 @@ from tools import eta_tur_func, import_file, ask_question, multiple_plots, extra
 
 # # ----------------------------- IMPORT DATA ----------------------------------
 # Enter the name of the file within the 'data' folder
-filename = '21 11 29 11 04 30tur_1.5bar.xls'
+filename = '22 01 10 14 25 57turbine_steptest_deel2.xls'
 
 # Import raw data from Excel file
 total_data, headers, t, ylabels = import_file(filename)
