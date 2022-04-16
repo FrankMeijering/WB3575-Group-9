@@ -5,7 +5,7 @@ This repository is dedicated to a thermodynamic calculator for an A-CAES (Adiaba
 ## Scripts and Files
 The data files are collected in the 'data' folder.
 
-There are five scripts, structured as follows:
+There are seven scripts, structured as follows:
 * "tools.py" contains the functions that are used within the two aforementioned scripts
 * "specific_heat.py" uses a high-accuracy model to calculate the mean value of cp and kappa
 * "theory_calc.py" is a theoretical model of the compressor, plotting the temperature after the compressor as a function of efficiency
